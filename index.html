@@ -1,32 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick World Clock</title>
+    <title>AuraTime Elite | Global Intelligence</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="app-container">
-        <header>
-            <h1>Global Clock</h1>
-            <div class="search-container">
-                <input type="text" id="cityInput" placeholder="Enter city name (e.g. London)...">
-                <button id="searchBtn">Search</button>
+    <div class="app-shell">
+        <aside class="sidebar">
+            <div class="logo">AURA<span>TIME</span></div>
+            
+            <div class="command-bar">
+                <input type="text" id="citySearch" placeholder="SEARCH GLOBAL NODE..." autocomplete="off">
+                <button id="syncBtn">SYNC NOW</button>
+                <div id="suggestions" class="drop-results"></div>
             </div>
-        </header>
 
-        <main>
+            <div class="intelligence-stack">
+                <div class="node-card local active">
+                    <span class="badge">LOCAL NODE</span>
+                    <h2 id="localName">Syncing...</h2>
+                    <div class="time-hero" id="localClock">00:00:00</div>
+                    <p id="localDate">---</p>
+                </div>
+
+                <div class="node-card remote" id="targetCard">
+                    <span class="badge accent">REMOTE NODE</span>
+                    <h2 id="targetName">AWAITING INPUT</h2>
+                    <div class="time-hero highlight" id="targetClock">--:--:--</div>
+                    <div class="telemetry">
+                        <div class="stat">ZONE: <span id="tzLabel">---</span></div>
+                        <div class="stat">SUN: <span id="solarLabel">---</span></div>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="themeToggle" class="pro-btn">TOGGLE INTERFACE</button>
+        </aside>
+
+        <main class="viewport">
             <div id="map"></div>
-
-            <div class="time-display" id="timeDisplay">
-                <h2 id="cityName">Your Location</h2>
-                <div class="clock" id="clock">00:00:00</div>
-                <p id="fullDate">Loading date...</p>
-                <p id="timezoneName">UTC</p>
-            </div>
         </main>
     </div>
 
