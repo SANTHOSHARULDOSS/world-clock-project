@@ -1,26 +1,36 @@
-:root[data-theme="dark"] { --bg: #020617; --side: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #6366f1; }
-:root[data-theme="light"] { --bg: #f8fafc; --side: #ffffff; --card: #f1f5f9; --text: #0f172a; --accent: #4f46e5; }
+:root[data-theme="dark"] { --bg: #020617; --side: #0f172a; --card: #1e293b; --text: #f8fafc; --accent: #6366f1; --border: rgba(255,255,255,0.1); }
+:root[data-theme="light"] { --bg: #f8fafc; --side: #ffffff; --card: #f1f5f9; --text: #0f172a; --accent: #4f46e5; --border: rgba(0,0,0,0.1); }
 
-body, html { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; background: var(--bg); color: var(--text); }
+body, html { margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; overflow: hidden; background: var(--bg); color: var(--text); transition: background 0.3s ease; }
 .app-shell { display: flex; height: 100vh; }
 
-.sidebar { width: 450px; background: var(--side); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.1); }
+.sidebar { width: 450px; background: var(--side); padding: 30px; display: flex; flex-direction: column; border-right: 1px solid var(--border); transition: background 0.3s ease; }
 .logo { font-size: 1.8rem; font-weight: 800; margin-bottom: 25px; }
 .logo span { color: var(--accent); }
 
-/* LARGE SEARCH COMMAND BAR */
 .command-bar { display: flex; gap: 10px; position: relative; margin-bottom: 30px; }
-#citySearch { flex: 1; padding: 18px; border-radius: 12px; border: 1px solid #334155; background: var(--card); color: var(--text); font-weight: 600; font-size: 1rem; }
+#citySearch { flex: 1; padding: 18px; border-radius: 12px; border: 1px solid #334155; background: var(--card); color: var(--text); font-weight: 600; font-size: 1rem; outline: none; }
 #syncBtn { padding: 0 30px; border-radius: 12px; background: var(--accent); color: white; border: none; font-weight: 800; cursor: pointer; transition: 0.2s; }
-#syncBtn:hover { transform: scale(1.05); }
 
-.node-card { background: var(--card); border-radius: 20px; padding: 25px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.05); }
+.node-card { background: var(--card); border-radius: 20px; padding: 25px; margin-bottom: 15px; border: 1px solid var(--border); }
 .time-hero { font-size: 4rem; font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
 .time-hero.highlight { color: var(--accent); }
 
+/* CONTROLS & SWITCH */
+.controls-overlay { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border); }
+.toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-size: 0.7rem; font-weight: 800; color: var(--accent); }
+
+.switch { position: relative; width: 44px; height: 22px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #475569; border-radius: 34px; transition: 0.4s; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: 0.4s; border-radius: 50%; }
+input:checked + .slider { background: var(--accent); }
+input:checked + .slider:before { transform: translateX(22px); }
+
+.pro-btn { width: 100%; padding: 18px; border-radius: 12px; background: var(--accent); color: white; border: none; font-weight: 800; cursor: pointer; transition: 0.3s; }
+.pro-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
 .viewport { flex: 1; position: relative; }
 #map { height: 100%; width: 100%; }
-
 .drop-results { position: absolute; top: 65px; width: 100%; background: var(--side); border-radius: 12px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-.item { padding: 15px; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.pro-btn { width: 100%; padding: 15px; margin-top: auto; border-radius: 12px; background: var(--accent); color: white; border: none; font-weight: 700; cursor: pointer; }
+.item { padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); }
