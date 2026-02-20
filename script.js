@@ -4,76 +4,89 @@ class AuraEngine {
             localTz: Intl.DateTimeFormat().resolvedOptions().timeZone,
             targetTz: null,
             map: null,
-            marker: null
+            marker: null,
+            is24Hour: false // New Format State
         };
         this.init();
     }
 
     init() {
         this.state.map = L.map('map', { zoomControl: false, attributionControl: false }).setView([20, 0], 2);
+        // Default Dark Tiles
         this.tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.state.map);
+        
         this.state.map.on('click', (e) => this.sync(e.latlng.lat, e.latlng.lng));
         this.bind();
         this.loop();
+        this.detect();
     }
 
     async sync(lat, lon, label = null) {
         if (this.state.marker) this.state.map.removeLayer(this.state.marker);
-        this.state.marker = L.circleMarker([lat, lon], { radius: 10, color: '#6366f1' }).addTo(this.state.map);
+        this.state.marker = L.circleMarker([lat, lon], { radius: 10, color: '#6366f1', weight: 3 }).addTo(this.state.map);
         
         document.getElementById('targetName').textContent = "SYNCING NODE...";
-
         try {
-            // REDUNDANT SYNC SYSTEM
             const res = await fetch(`https://api.bigdatacloud.net/data/timezone-by-location?latitude=${lat}&longitude=${lon}&localityLanguage=en&key=free`);
             const data = await res.json();
-
-            let name = label;
-            if(!name) {
-                const geo = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-                const gData = await geo.json();
-                name = gData.address.city || gData.address.country || "COORDINATE NODE";
-            }
-
-            // FAILSAFE: If API ID is missing, we calculate based on longitude
+            let name = label || (await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)).json()).address.city || "REMOTE NODE";
+            
             this.state.targetTz = data.ianaTimeId || `Etc/GMT${lon >= 0 ? '-' : '+'}${Math.abs(Math.round(lon/15))}`;
             
             document.getElementById('targetName').textContent = name;
             document.getElementById('tzLabel').textContent = this.state.targetTz;
             document.getElementById('targetCard').classList.add('active');
-            
-        } catch (e) {
-            document.getElementById('targetName').textContent = "DATA ERROR";
-        }
+        } catch (e) { document.getElementById('targetName').textContent = "SYNC_ERROR"; }
     }
 
     loop() {
         setInterval(() => {
             const now = new Date();
-            const opt = (tz) => ({ timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            // Dynamically check is24Hour state
+            const opt = (tz) => ({ 
+                timeZone: tz, 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', 
+                hour12: !this.state.is24Hour 
+            });
 
             document.getElementById('localClock').textContent = now.toLocaleTimeString('en-US', opt(this.state.localTz));
             document.getElementById('localDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
 
             if (this.state.targetTz) {
                 try {
-                    // This is where the time is pushed to the screen
-                    const timeStr = now.toLocaleTimeString('en-US', opt(this.state.targetTz));
-                    document.getElementById('targetClock').textContent = timeStr;
-                    
+                    document.getElementById('targetClock').textContent = now.toLocaleTimeString('en-US', opt(this.state.targetTz));
                     const hr = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone: this.state.targetTz, hour: 'numeric', hour12: false}).format(now));
                     document.getElementById('solarLabel').textContent = (hr >= 6 && hr < 18) ? "DAYLIGHT" : "NIGHTFALL";
-                } catch (e) {
-                    document.getElementById('targetClock').textContent = "FORMAT_ERR";
-                }
+                } catch (e) { document.getElementById('targetClock').textContent = "--:--:--"; }
             }
         }, 1000);
+    }
+
+    toggleTheme() {
+        const root = document.documentElement;
+        const current = root.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        
+        // Update Map Tiles
+        const url = next === 'dark' 
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' 
+            : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        this.tiles.setUrl(url);
     }
 
     bind() {
         document.getElementById('syncBtn').onclick = () => {
             const val = document.getElementById('citySearch').value;
             if(val) this.search(val);
+        };
+
+        // Theme Toggle Binding
+        document.getElementById('themeToggle').onclick = () => this.toggleTheme();
+
+        // Format Toggle Binding
+        document.getElementById('formatToggle').onchange = (e) => {
+            this.state.is24Hour = e.target.checked;
         };
 
         const inp = document.getElementById('citySearch');
@@ -92,6 +105,15 @@ class AuraEngine {
         document.getElementById('citySearch').value = "";
         this.state.map.flyTo([lat, lon], 10);
         this.sync(parseFloat(lat), parseFloat(lon), name);
+    }
+
+    detect() {
+        if(navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((p) => {
+                document.getElementById('localName').textContent = "Home Node";
+                this.state.map.setView([p.coords.latitude, p.coords.longitude], 4);
+            });
+        }
     }
 }
 
