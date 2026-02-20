@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #121212;
+    color: white;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+header {
+    padding: 20px;
+    text-align: center;
+    background: #1e1e1e;
+}
+
+.search-container input {
+    padding: 10px;
+    width: 250px;
+    border-radius: 5px;
+    border: none;
+}
+
+#map {
+    height: 400px;
+    width: 100%;
+    background: #242424;
+}
+
+.time-display {
+    padding: 40px;
+    text-align: center;
+    background: #1e1e1e;
+    flex-grow: 1;
+}
+
+.clock {
+    font-size: 4rem;
+    font-weight: bold;
+    color: #00d4ff;
+    margin: 10px 0;
+}

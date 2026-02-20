@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick World Clock</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header>
+            <h1>Global Clock</h1>
+            <div class="search-container">
+                <input type="text" id="cityInput" placeholder="Enter city name (e.g. London)...">
+                <button id="searchBtn">Search</button>
+            </div>
+        </header>
+
+        <main>
+            <div id="map"></div>
+
+            <div class="time-display" id="timeDisplay">
+                <h2 id="cityName">Your Location</h2>
+                <div class="clock" id="clock">00:00:00</div>
+                <p id="fullDate">Loading date...</p>
+                <p id="timezoneName">UTC</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
