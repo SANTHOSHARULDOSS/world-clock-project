@@ -3,42 +3,36 @@
 
 body, html { margin: 0; padding: 0; height: 100vh; font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); overflow: hidden; }
 
-.app-shell { height: 100vh; display: flex; flex-direction: column; }
-.dashboard { flex: 1; padding: 30px; display: flex; flex-direction: column; max-width: 600px; margin: 0 auto; width: 100%; box-sizing: border-box; }
+/* FLOATING SEARCH - KEY LOGIC */
+.global-search { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 500px; z-index: 5000; }
+.input-wrapper { position: relative; }
+#citySearch { width: 100%; padding: 15px 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-weight: 700; box-shadow: 0 10px 30px rgba(0,0,0,0.3); outline: none; }
 
-.logo { font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; margin-bottom: 5px; }
-.logo span { color: var(--accent); }
+.search-drop { position: absolute; width: 100%; background: var(--card); border-radius: 12px; margin-top: 5px; max-height: 200px; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.item { padding: 15px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
 
-.monitor-card { background: var(--card); border-radius: 24px; padding: 25px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-.monitor-card.active { border-left: 6px solid var(--accent); }
+/* UI PANELS */
+.ui-panel { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; padding: 100px 20px 20px; box-sizing: border-box; }
+.ui-panel.active { display: flex; }
 
-.digital-time { font-size: 3.5rem; font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
-.digital-time.highlight { color: var(--accent); }
+.card { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 15px; }
+.clock { font-size: 3.5rem; font-weight: 800; margin: 10px 0; font-variant-numeric: tabular-nums; }
+.clock.accent { color: var(--accent); }
 
-.telemetry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid var(--border); margin-top: 15px; padding-top: 15px; }
-.data-box small { display: block; font-size: 0.6rem; font-weight: 800; color: var(--accent); margin-bottom: 2px; }
+/* BUTTONS */
+.main-btn { width: 100%; padding: 20px; border-radius: 15px; background: var(--accent); color: white; border: none; font-weight: 800; cursor: pointer; font-size: 1rem; }
+.sub-btn { width: 100%; padding: 15px; border-radius: 15px; background: transparent; border: 2px solid var(--accent); color: var(--accent); margin-top: 10px; font-weight: 700; cursor: pointer; }
 
-/* MAP OVERLAY STYLES */
-.overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg); z-index: 2000; display: none; flex-direction: column; }
-.overlay.active { display: flex; animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+#mapView { padding: 0; }
+#map { height: 100%; width: 100%; }
+.map-controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; z-index: 4000; }
+.exit-btn { width: 100%; padding: 15px; border-radius: 12px; background: #ef4444; color: white; border: none; font-weight: 800; cursor: pointer; }
 
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-.overlay-header { padding: 15px; display: flex; gap: 10px; background: var(--card); border-bottom: 1px solid var(--border); }
-.search-container { flex: 1; position: relative; }
-#citySearch { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; }
-
-#map { flex: 1; width: 100%; }
-
-.pro-btn { width: 100%; padding: 18px; border-radius: 15px; background: var(--accent); color: white; border: none; font-weight: 800; cursor: pointer; margin-top: 10px; font-size: 1rem; }
-.pro-btn.secondary { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
-.close-btn { background: #ef4444; color: white; border: none; width: 45px; border-radius: 12px; font-size: 1.5rem; cursor: pointer; }
-
-/* Switch Controls */
-.switch { position: relative; width: 44px; height: 22px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #475569; border-radius: 34px; transition: 0.4s; }
-.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.4s; }
+/* Toggle */
+.switch-box { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; font-size: 0.7rem; color: var(--accent); }
+.toggle { position: relative; width: 40px; height: 20px; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: #475569; border-radius: 34px; transition: 0.4s; cursor: pointer; }
+.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.4s; }
 input:checked + .slider { background: var(--accent); }
-input:checked + .slider:before { transform: translateX(22px); }
-.toggle-group { display: flex; justify-content: space-between; align-items: center; padding: 10px 5px; font-size: 0.7rem; font-weight: 800; }
+input:checked + .slider:before { transform: translateX(20px); }
