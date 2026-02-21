@@ -3,62 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AuraTime Elite | Global Sync</title>
+    <title>AuraTime Elite | Precision Sync</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="global-search">
+        <div class="input-wrapper">
+            <input type="text" id="citySearch" placeholder="SEARCH GLOBAL CITIES..." autocomplete="off">
+            <div id="suggestions" class="search-drop"></div>
+        </div>
+    </div>
+
     <div class="app-shell">
-        <main class="dashboard">
-            <header class="header">
+        <main id="dashboard" class="ui-panel active">
+            <header class="logo-area">
                 <div class="logo">AURA<span>TIME</span></div>
-                <div class="status-pill"><span class="pulse"></span> SYSTEM ONLINE</div>
             </header>
 
-            <section class="clock-monitor">
-                <div class="monitor-card local active">
-                    <span class="tag">LOCAL ORIGIN</span>
+            <div class="monitor">
+                <div class="card local">
+                    <small>LOCAL ORIGIN</small>
                     <h2 id="localPlace">Detecting...</h2>
-                    <div class="digital-time" id="localClock">00:00:00</div>
-                    <div class="date-label" id="localDate">---</div>
+                    <div class="clock" id="localClock">00:00:00</div>
+                    <div class="date" id="localDate">---</div>
                 </div>
 
-                <div class="monitor-card remote" id="targetCard">
-                    <span class="tag accent">REMOTE SYNC</span>
+                <div class="card remote" id="targetCard">
+                    <small>REMOTE SYNC</small>
                     <h2 id="targetPlace">AWAITING SELECTION</h2>
-                    <div class="digital-time highlight" id="targetClock">--:--:--</div>
-                    <div class="telemetry-grid">
-                        <div class="data-box"><small>ZONE</small><span id="tzLabel">---</span></div>
-                        <div class="data-box"><small>SOLAR</small><span id="solarLabel">---</span></div>
+                    <div class="clock accent" id="targetClock">--:--:--</div>
+                    <div class="grid">
+                        <div class="bit">ZONE: <span id="tzLabel">---</span></div>
+                        <div class="bit">SOLAR: <span id="solarLabel">---</span></div>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <footer class="action-bar">
-                <div class="toggle-group">
-                    <span>24H FORMAT</span>
-                    <label class="switch">
-                        <input type="checkbox" id="formatToggle">
-                        <span class="slider"></span>
-                    </label>
+            <div class="actions">
+                <div class="switch-box">
+                    <span>24H MILITARY</span>
+                    <label class="toggle"><input type="checkbox" id="formatToggle"><span class="slider"></span></label>
                 </div>
-                <button id="openMapBtn" class="pro-btn">OPEN GLOBAL MAP</button>
-                <button id="themeToggle" class="pro-btn secondary">TOGGLE THEME</button>
-            </footer>
+                <button id="openMapBtn" class="main-btn">OPEN GLOBAL MAP</button>
+                <button id="themeToggle" class="sub-btn">TOGGLE THEME</button>
+            </div>
         </main>
 
-        <div id="mapOverlay" class="overlay">
-            <div class="overlay-header">
-                <div class="search-container">
-                    <input type="text" id="citySearch" placeholder="SEARCH GLOBAL CITIES..." autocomplete="off">
-                    <div id="suggestions" class="results-drop"></div>
-                </div>
-                <button id="closeMapBtn" class="close-btn">&times;</button>
-            </div>
+        <section id="mapView" class="ui-panel">
             <div id="map"></div>
-            <div class="map-tip">TAP ANYWHERE TO SELECT LOCATION</div>
-        </div>
+            <div class="map-controls">
+                <button id="closeMapBtn" class="exit-btn">RETURN TO DASHBOARD</button>
+            </div>
+        </section>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
