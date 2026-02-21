@@ -2,8 +2,8 @@
 <html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTime Elite | Global Intelligence</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AuraTime Elite | Global Sync</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -11,42 +11,46 @@
 <body>
     <div class="app-shell">
         <aside class="sidebar">
-            <div class="logo">AURA<span>TIME</span></div>
-            
-            <div class="command-bar">
-                <input type="text" id="citySearch" placeholder="SEARCH GLOBAL NODE..." autocomplete="off">
-                <button id="syncBtn">SYNC NOW</button>
-                <div id="suggestions" class="drop-results"></div>
+            <div class="header-box">
+                <div class="logo">AURA<span>TIME</span></div>
+                <div class="search-engine">
+                    <div class="input-group">
+                        <input type="text" id="citySearch" placeholder="SEARCH CITY..." autocomplete="off">
+                        <button id="syncBtn">SYNC</button>
+                    </div>
+                    <div id="suggestions" class="results-drop"></div>
+                </div>
             </div>
 
-            <div class="intelligence-stack">
-                <div class="node-card local active">
+            <div class="monitor-grid">
+                <div class="node-card local">
                     <span class="badge">LOCAL NODE</span>
-                    <h2 id="localName">Syncing...</h2>
-                    <div class="time-hero" id="localClock">00:00:00</div>
+                    <h2 id="localPlace">Detecting...</h2>
+                    <div class="time-main" id="localClock">00:00:00</div>
                     <p id="localDate">---</p>
                 </div>
 
                 <div class="node-card remote" id="targetCard">
-                    <span class="badge accent">REMOTE NODE</span>
-                    <h2 id="targetName">AWAITING INPUT</h2>
-                    <div class="time-hero highlight" id="targetClock">--:--:--</div>
+                    <span class="badge accent">REMOTE SYNC</span>
+                    <h2 id="targetPlace">AWAITING LOCATION</h2>
+                    <div class="time-main highlight" id="targetClock">--:--:--</div>
                     <div class="telemetry">
                         <div class="stat">ZONE: <span id="tzLabel">---</span></div>
-                        <div class="stat">SUN: <span id="solarLabel">---</span></div>
+                        <div class="stat">SOLAR: <span id="solarLabel">---</span></div>
                     </div>
                 </div>
             </div>
-            
-            <div class="controls-overlay">
-                <div class="toggle-row">
-                    <span>24H MILITARY FORMAT</span>
+
+            <div class="controls">
+                <div class="tgl-row">
+                    <span>24H FORMAT</span>
                     <label class="switch">
                         <input type="checkbox" id="formatToggle">
                         <span class="slider"></span>
                     </label>
                 </div>
-                <button id="themeToggle" class="pro-btn">TOGGLE INTERFACE</button>
+                <button id="themeToggle" class="pro-btn">TOGGLE THEME</button>
+                <button id="mapCenterBtn" class="pro-btn secondary">VIEW GLOBAL MAP</button>
             </div>
         </aside>
 
