@@ -24,26 +24,24 @@ class AuraEngine {
         if (this.state.marker) this.state.map.removeLayer(this.state.marker);
         this.state.marker = L.circleMarker([lat, lon], { radius: 10, color: '#6366f1' }).addTo(this.state.map);
         
-        document.getElementById('targetName').textContent = "SYNCING...";
-
         try {
-            // High-precision API used to ensure Indian Standard Time (IST) is exact
+            // High-Precision API Sync
             const res = await fetch(`https://api.bigdatacloud.net/data/timezone-by-location?latitude=${lat}&longitude=${lon}&localityLanguage=en&key=free`);
             const data = await res.json();
+            
+            let name = label || (await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)).json()).address.city || "Remote Point";
 
-            let name = label || (await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)).json()).address.city || "Global Point";
-
-            // CRITICAL FIX: Explicitly using IANA IDs to solve the "Half-Hour Less" IST bug
+            // State update for the clock loop
             this.state.targetTz = data.ianaTimeId;
             
-            document.getElementById('targetName').textContent = name;
+            document.getElementById('targetPlace').textContent = name;
             document.getElementById('tzLabel').textContent = this.state.targetTz;
             document.getElementById('targetCard').classList.add('active');
             
-            // Auto-center on selection for Mobile
-            if(window.innerWidth < 768) this.state.map.panTo([lat, lon]);
+            // Close map automatically on selection
+            setTimeout(() => document.getElementById('mapOverlay').classList.remove('active'), 800);
 
-        } catch (e) { document.getElementById('targetName').textContent = "SYNC_ERROR"; }
+        } catch (e) { console.error("Sync Error"); }
     }
 
     loop() {
@@ -59,16 +57,18 @@ class AuraEngine {
                     document.getElementById('targetClock').textContent = now.toLocaleTimeString('en-US', opt(this.state.targetTz));
                     const hr = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone: this.state.targetTz, hour: 'numeric', hour12: false}).format(now));
                     document.getElementById('solarLabel').textContent = (hr >= 6 && hr < 18) ? "DAYLIGHT" : "NIGHTFALL";
-                } catch (e) { document.getElementById('targetClock').textContent = "TZ_ERR"; }
+                } catch (e) { document.getElementById('targetClock').textContent = "--:--:--"; }
             }
         }, 1000);
     }
 
     bind() {
-        document.getElementById('syncBtn').onclick = () => {
-            const q = document.getElementById('citySearch').value;
-            if(q) this.search(q);
+        // MAP MODAL CONTROLS
+        document.getElementById('openMapBtn').onclick = () => {
+            document.getElementById('mapOverlay').classList.add('active');
+            setTimeout(() => this.state.map.invalidateSize(), 400); // Fixes grey map issue
         };
+        document.getElementById('closeMapBtn').onclick = () => document.getElementById('mapOverlay').classList.remove('active');
 
         document.getElementById('themeToggle').onclick = () => {
             const r = document.documentElement;
@@ -79,8 +79,7 @@ class AuraEngine {
 
         document.getElementById('formatToggle').onchange = (e) => this.state.is24Hour = e.target.checked;
 
-        document.getElementById('mapCenterBtn').onclick = () => this.state.map.setView([20, 0], 2);
-
+        // SEARCH LOGIC
         const inp = document.getElementById('citySearch');
         inp.oninput = async (e) => {
             if(e.target.value.length < 3) return;
@@ -101,7 +100,7 @@ class AuraEngine {
     detect() {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((p) => {
-                document.getElementById('localPlace').textContent = "HOME NODE";
+                document.getElementById('localPlace').textContent = "Home Node";
                 this.state.map.setView([p.coords.latitude, p.coords.longitude], 4);
             });
         }
