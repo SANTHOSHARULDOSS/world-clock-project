@@ -13,7 +13,6 @@ class AuraEngine {
     init() {
         this.state.map = L.map('map', { zoomControl: false, attributionControl: false }).setView([20, 0], 2);
         this.tiles = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png').addTo(this.state.map);
-        
         this.state.map.on('click', (e) => this.sync(e.latlng.lat, e.latlng.lng));
         this.bind();
         this.loop();
@@ -25,23 +24,19 @@ class AuraEngine {
         this.state.marker = L.circleMarker([lat, lon], { radius: 10, color: '#6366f1' }).addTo(this.state.map);
         
         try {
-            // High-Precision API Sync
+            // Precision API - Fixes IST +5:30 offset
             const res = await fetch(`https://api.bigdatacloud.net/data/timezone-by-location?latitude=${lat}&longitude=${lon}&localityLanguage=en&key=free`);
             const data = await res.json();
             
             let name = label || (await (await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)).json()).address.city || "Remote Point";
 
-            // State update for the clock loop
-            this.state.targetTz = data.ianaTimeId;
+            this.state.targetTz = data.ianaTimeId; // Strict IANA ID
             
             document.getElementById('targetPlace').textContent = name;
             document.getElementById('tzLabel').textContent = this.state.targetTz;
             document.getElementById('targetCard').classList.add('active');
             
-            // Close map automatically on selection
-            setTimeout(() => document.getElementById('mapOverlay').classList.remove('active'), 800);
-
-        } catch (e) { console.error("Sync Error"); }
+        } catch (e) { console.error("Sync Failure"); }
     }
 
     loop() {
@@ -56,19 +51,23 @@ class AuraEngine {
                 try {
                     document.getElementById('targetClock').textContent = now.toLocaleTimeString('en-US', opt(this.state.targetTz));
                     const hr = parseInt(new Intl.DateTimeFormat('en-GB', {timeZone: this.state.targetTz, hour: 'numeric', hour12: false}).format(now));
-                    document.getElementById('solarLabel').textContent = (hr >= 6 && hr < 18) ? "DAYLIGHT" : "NIGHTFALL";
+                    document.getElementById('solarLabel').textContent = (hr >= 6 && hr < 18) ? "☀️ DAY" : "🌙 NIGHT";
                 } catch (e) { document.getElementById('targetClock').textContent = "--:--:--"; }
             }
         }, 1000);
     }
 
     bind() {
-        // MAP MODAL CONTROLS
+        // PANEL SWITCHING
         document.getElementById('openMapBtn').onclick = () => {
-            document.getElementById('mapOverlay').classList.add('active');
-            setTimeout(() => this.state.map.invalidateSize(), 400); // Fixes grey map issue
+            document.getElementById('dashboard').classList.remove('active');
+            document.getElementById('mapView').classList.add('active');
+            setTimeout(() => this.state.map.invalidateSize(), 200);
         };
-        document.getElementById('closeMapBtn').onclick = () => document.getElementById('mapOverlay').classList.remove('active');
+        document.getElementById('closeMapBtn').onclick = () => {
+            document.getElementById('mapView').classList.remove('active');
+            document.getElementById('dashboard').classList.add('active');
+        };
 
         document.getElementById('themeToggle').onclick = () => {
             const r = document.documentElement;
@@ -79,7 +78,7 @@ class AuraEngine {
 
         document.getElementById('formatToggle').onchange = (e) => this.state.is24Hour = e.target.checked;
 
-        // SEARCH LOGIC
+        // GLOBAL SEARCH
         const inp = document.getElementById('citySearch');
         inp.oninput = async (e) => {
             if(e.target.value.length < 3) return;
@@ -100,7 +99,7 @@ class AuraEngine {
     detect() {
         if(navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((p) => {
-                document.getElementById('localPlace').textContent = "Home Node";
+                document.getElementById('localPlace').textContent = "HOME NODE";
                 this.state.map.setView([p.coords.latitude, p.coords.longitude], 4);
             });
         }
