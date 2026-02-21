@@ -10,53 +10,55 @@
 </head>
 <body>
     <div class="app-shell">
-        <aside class="sidebar">
-            <div class="header-box">
+        <main class="dashboard">
+            <header class="header">
                 <div class="logo">AURA<span>TIME</span></div>
-                <div class="search-engine">
-                    <div class="input-group">
-                        <input type="text" id="citySearch" placeholder="SEARCH CITY..." autocomplete="off">
-                        <button id="syncBtn">SYNC</button>
-                    </div>
-                    <div id="suggestions" class="results-drop"></div>
-                </div>
-            </div>
+                <div class="status-pill"><span class="pulse"></span> SYSTEM ONLINE</div>
+            </header>
 
-            <div class="monitor-grid">
-                <div class="node-card local">
-                    <span class="badge">LOCAL NODE</span>
+            <section class="clock-monitor">
+                <div class="monitor-card local active">
+                    <span class="tag">LOCAL ORIGIN</span>
                     <h2 id="localPlace">Detecting...</h2>
-                    <div class="time-main" id="localClock">00:00:00</div>
-                    <p id="localDate">---</p>
+                    <div class="digital-time" id="localClock">00:00:00</div>
+                    <div class="date-label" id="localDate">---</div>
                 </div>
 
-                <div class="node-card remote" id="targetCard">
-                    <span class="badge accent">REMOTE SYNC</span>
-                    <h2 id="targetPlace">AWAITING LOCATION</h2>
-                    <div class="time-main highlight" id="targetClock">--:--:--</div>
-                    <div class="telemetry">
-                        <div class="stat">ZONE: <span id="tzLabel">---</span></div>
-                        <div class="stat">SOLAR: <span id="solarLabel">---</span></div>
+                <div class="monitor-card remote" id="targetCard">
+                    <span class="tag accent">REMOTE SYNC</span>
+                    <h2 id="targetPlace">AWAITING SELECTION</h2>
+                    <div class="digital-time highlight" id="targetClock">--:--:--</div>
+                    <div class="telemetry-grid">
+                        <div class="data-box"><small>ZONE</small><span id="tzLabel">---</span></div>
+                        <div class="data-box"><small>SOLAR</small><span id="solarLabel">---</span></div>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="controls">
-                <div class="tgl-row">
+            <footer class="action-bar">
+                <div class="toggle-group">
                     <span>24H FORMAT</span>
                     <label class="switch">
                         <input type="checkbox" id="formatToggle">
                         <span class="slider"></span>
                     </label>
                 </div>
-                <button id="themeToggle" class="pro-btn">TOGGLE THEME</button>
-                <button id="mapCenterBtn" class="pro-btn secondary">VIEW GLOBAL MAP</button>
-            </div>
-        </aside>
-
-        <main class="viewport">
-            <div id="map"></div>
+                <button id="openMapBtn" class="pro-btn">OPEN GLOBAL MAP</button>
+                <button id="themeToggle" class="pro-btn secondary">TOGGLE THEME</button>
+            </footer>
         </main>
+
+        <div id="mapOverlay" class="overlay">
+            <div class="overlay-header">
+                <div class="search-container">
+                    <input type="text" id="citySearch" placeholder="SEARCH GLOBAL CITIES..." autocomplete="off">
+                    <div id="suggestions" class="results-drop"></div>
+                </div>
+                <button id="closeMapBtn" class="close-btn">&times;</button>
+            </div>
+            <div id="map"></div>
+            <div class="map-tip">TAP ANYWHERE TO SELECT LOCATION</div>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
